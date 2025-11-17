@@ -1,0 +1,133 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyNB/SE/yMMokzqx088ykKhp",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/Goldie97/Goldcohort12alx/blob/Goldie/Level%207%20exercise\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "ZLC8GouYfJ93"
+      },
+      "outputs": [],
+      "source": [
+        "import pandas as pd\n",
+        "\n",
+        "# Load and Explore the Data\n",
+        "\n",
+        "df = pd.read_csv('techmart_sales.csv')\n",
+        "\n",
+        "# Convert Date column to datetime\n",
+        "df['Date'] = pd.to_datetime(df['Date'])\n",
+        "\n",
+        "print(\"First 5 rows:\")\n",
+        "display(df.head())\n",
+        "\n",
+        "print(\"\\nDataset Info:\")\n",
+        "print(df.info())\n",
+        "\n",
+        "print(\"\\nSummary Statistics:\")\n",
+        "print(df.describe())\n",
+        "\n",
+        "\n",
+        "# Clean and Prepare the Data\n",
+        "\n",
+        "# Check for missing values\n",
+        "print(\"\\nMissing Values:\")\n",
+        "print(df.isna().sum())\n",
+        "\n",
+        "# Create Month column for time-based analysis\n",
+        "df['Month'] = df['Date'].dt.to_period('M')\n",
+        "\n",
+        "# Confirm data types\n",
+        "print(\"\\nUpdated Data Types:\")\n",
+        "print(df.dtypes)\n",
+        "\n",
+        "\n",
+        "# Analyze Key Metrics\n",
+        "\n",
+        "# Total revenue by product\n",
+        "product_revenue = df.groupby('Product')['Revenue'].sum().sort_values(ascending=False)\n",
+        "print(\"\\nRevenue by Product:\")\n",
+        "display(product_revenue)\n",
+        "\n",
+        "# Total revenue by store\n",
+        "store_revenue = df.groupby('Store')['Revenue'].sum().sort_values(ascending=False)\n",
+        "print(\"\\nRevenue by Store:\")\n",
+        "display(store_revenue)\n",
+        "\n",
+        "# Best-selling product (units sold)\n",
+        "top_units = df.groupby('Product')['Units_Sold'].sum().sort_values(ascending=False)\n",
+        "print(\"\\nUnits Sold by Product:\")\n",
+        "display(top_units)\n",
+        "\n",
+        "\n",
+        "# Time-Based Insights\n",
+        "\n",
+        "# Monthly total revenue\n",
+        "monthly_revenue = df.groupby('Month')['Revenue'].sum()\n",
+        "print(\"\\nMonthly Revenue:\")\n",
+        "display(monthly_revenue)\n",
+        "\n",
+        "# Monthly revenue by store\n",
+        "monthly_store_trends = df.groupby(['Month', 'Store'])['Revenue'].sum().reset_index()\n",
+        "print(\"\\nMonthly Revenue by Store:\")\n",
+        "display(monthly_store_trends.head())\n",
+        "\n",
+        "\n",
+        "# Store Comparison\n",
+        "\n",
+        "# Average revenue per sale by store\n",
+        "avg_rev_store = df.groupby('Store')['Revenue'].mean()\n",
+        "print(\"\\nAverage Revenue per Sale by Store:\")\n",
+        "display(avg_rev_store)\n",
+        "\n",
+        "# Best store overall\n",
+        "best_store = store_revenue.idxmax()\n",
+        "print(f\"\\nBest Performing Store: {best_store} with revenue ${store_revenue.max():,}\")\n",
+        "\n",
+        "# Product contribution per store\n",
+        "store_product_mix = df.groupby(['Store', 'Product'])['Revenue'].sum()\n",
+        "print(\"\\nProduct Revenue Mix per Store:\")\n",
+        "display(store_product_mix)\n",
+        "\n",
+        "\n",
+        "# Summary Report\n",
+        "\n",
+        "summary = {\n",
+        "    \"Top Product by Revenue\": product_revenue.idxmax(),\n",
+        "    \"Top Performing Store\": store_revenue.idxmax(),\n",
+        "    \"Highest Revenue Month\": monthly_revenue.idxmax(),\n",
+        "    \"Most Units Sold Product\": top_units.idxmax()\n",
+        "}\n",
+        "\n",
+        "print(\"\\n--- SUMMARY REPORT ---\")\n",
+        "for key, value in summary.items():\n",
+        "    print(f\"{key}: {value}\")\n"
+      ]
+    }
+  ]
+}
